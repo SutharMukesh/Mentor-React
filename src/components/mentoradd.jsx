@@ -54,6 +54,7 @@ class Mentoradd extends Component {
     const resdata = await response.json();
     alert(resdata.message);
     if (response.status === 200) {
+      this.props.refreshMentors();
       this.props.history.push("/");
     }
   };

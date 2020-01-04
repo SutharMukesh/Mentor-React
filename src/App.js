@@ -11,13 +11,20 @@ class App extends Component {
     mentors: []
   };
 
-  async componentWillUpdate(){
+  async componentWillReceiveProps(){
     
     const mentors = await fetch("http://localhost:3005/");
     const mentorsdata = await mentors.json();
     this.setState({ mentors: mentorsdata });
   
   }
+
+  refreshMentors=async ()=>{
+    const mentors = await fetch("http://localhost:3005/");
+    const mentorsdata = await mentors.json();
+    this.setState({ mentors: mentorsdata });
+  }
+
   async componentDidMount() {
     const mentors = await fetch("http://localhost:3005/");
     const mentorsdata = await mentors.json();
@@ -61,14 +68,14 @@ class App extends Component {
                 exact
                 path="/add"
                 render={props => (
-                  <Mentoradd {...props} addMentor={this.addMentor}/>
+                  <Mentoradd {...props} addMentor={this.addMentor} refreshMentors={this.refreshMentors}/>
                 )}
               />
               <Route
                 exact
                 path="/edit/:id"
                 render={props => (
-                  <Mentoredit {...props} mentors={this.state.mentors} />
+                  <Mentoredit {...props} mentors={this.state.mentors} refreshMentors={this.refreshMentors}/>
                 )}
               />
               <Route render={props => <h3>Not Found</h3>} />

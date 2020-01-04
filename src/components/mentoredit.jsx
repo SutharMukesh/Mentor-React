@@ -65,6 +65,7 @@ class Mentoredit extends Component {
     alert(resdata.message);
     if (response.status === 200) {
       this.setState(mentor);
+      this.props.refreshMentors();
       this.props.history.push("/");
     }
   };
