@@ -1,26 +1,83 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import NavBar from "./components/navbar";
+import Mentorlist from "./components/mentorlist";
+import Mentordetail from "./components/mentordetail";
+import Mentoradd from "./components/mentoradd";
+import Mentoredit from "./components/mentoredit";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+class App extends Component {
+  state = {
+    mentors: []
+  };
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  async componentWillUpdate(){
+    
+    const mentors = await fetch("http://localhost:3005/");
+    const mentorsdata = await mentors.json();
+    this.setState({ mentors: mentorsdata });
+  
+  }
+  async componentDidMount() {
+    const mentors = await fetch("http://localhost:3005/");
+    const mentorsdata = await mentors.json();
+    this.setState({ mentors: mentorsdata });
+  }
+
+  deleteMentor = async(id)=>{
+    if(window.confirm("you sure?")){
+      const deleteres = await fetch("http://localhost:3005/"+id,{
+         method: "DELETE"
+      });
+      const deleteresdata = await deleteres.json();
+      alert(deleteresdata.message)
+       const mentors = await fetch("http://localhost:3005/");
+      const mentorsdata = await mentors.json();
+      this.setState({ mentors: mentorsdata });
+    }
+  }
+  
+  render() {
+    return (
+      <div>
+        <Router>
+          <NavBar />
+          <div className="App">
+            <Switch>
+              <Route
+                path="/read/:id"
+                render={props => (
+                  <Mentordetail {...props} mentors={this.state.mentors} />
+                )}
+              />
+              <Route
+                exact
+                path="/"
+                render={props => (
+                  <Mentorlist {...props} mentors={this.state.mentors} deleteMentor={this.deleteMentor} />
+                )}
+              />
+               <Route
+                exact
+                path="/add"
+                render={props => (
+                  <Mentoradd {...props} addMentor={this.addMentor}/>
+                )}
+              />
+              <Route
+                exact
+                path="/edit/:id"
+                render={props => (
+                  <Mentoredit {...props} mentors={this.state.mentors} />
+                )}
+              />
+              <Route render={props => <h3>Not Found</h3>} />
+            </Switch>
+          </div>
+        </Router>
+      </div>
+    );
+  }
 }
 
 export default App;
